@@ -15,6 +15,11 @@ type PlayState struct {
 	Song   string `json:"song"`
 }
 
+type PlayHolder struct {
+	Spotify  PlayState `json:"spotify"`
+	Swinsian PlayState `json:"swinsian"`
+}
+
 func main() {
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
@@ -29,25 +34,25 @@ func main() {
 	r.Run()
 }
 
-func GetState() (PlayState, error) {
+func GetState() (PlayHolder, error) {
 
-	command := `tell application "Swinsian"
-	set playstate to player state
-	set fileformat to kind of current track
-	set trackname to name of current track
-	set trackartist to artist of current track
-	set trackalbum to album of current track
-	set info to "{\"format\": \"" & fileformat & "\",\"state\": \"" & playstate & "\",\"song\": \"" & trackname & "\",\"artist\": \"" & trackartist & "\",\"album\": \"" & trackalbum & "\"}"
-end tell`
+	// 	command := `tell application "Swinsian"
+	// 	set playstate to player state
+	// 	set fileformat to kind of current track
+	// 	set trackname to name of current track
+	// 	set trackartist to artist of current track
+	// 	set trackalbum to album of current track
+	// 	set info to "{\"format\": \"" & fileformat & "\",\"state\": \"" & playstate & "\",\"song\": \"" & trackname & "\",\"artist\": \"" & trackartist & "\",\"album\": \"" & trackalbum & "\"}"
+	// end tell`
 
-	cmd := exec.Command("osascript", "-e", command)
+	cmd := exec.Command("osascript", "as.scpt")
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return PlayState{}, err
+		return PlayHolder{}, err
 	}
 
-	var state PlayState
+	var state PlayHolder
 
 	err = json.Unmarshal(output, &state)
 
