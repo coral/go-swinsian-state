@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os/exec"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +22,7 @@ type PlayHolder struct {
 }
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
 		state, err := GetState()
@@ -55,6 +57,8 @@ func GetState() (PlayHolder, error) {
 	var state PlayHolder
 
 	err = json.Unmarshal(output, &state)
+
+	state.Swinsian.Format = strings.ToUpper(state.Swinsian.Format)
 
 	return state, err
 
